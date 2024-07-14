@@ -239,9 +239,10 @@ export class SilhouetteGenerator {
 
 			} else {
 
-				overallPath = Clipper.Union( overallPath, path, FillRule.NonZero );
-				overallPath.forEach( path => compressPoints( path ) );
-
+				const unionResult = Clipper.Union(overallPath, path, FillRule.NonZero);
+				overallPath = Clipper.SimplifyPolygons(unionResult, FillRule.NonZero);
+				overallPath = [Clipper.GetLargestPolygon(overallPath)]; // Keep only the largest polygon
+				overallPath.forEach(path => compressPoints(path));
 			}
 
 			const delta = performance.now() - time;
